@@ -5,5 +5,6 @@ https://moscow-hackaton.herokuapp.com/
 # 2 - Run server.py
 	python3 server.py
 # 3 - Open localhost
-	http://localhost:5000
+	http://localhost:5000/
+
 
