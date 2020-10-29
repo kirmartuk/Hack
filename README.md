@@ -4,7 +4,6 @@ https://moscow-hackaton.herokuapp.com/
 	source env/bin/activate
 # 2 - Run server.py
 	python3 server.py
-# 3 - Open localhost
-	http://localhost:5000/
+# 3 - Open http://localhost:5000/
 
 
