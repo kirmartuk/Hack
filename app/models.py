@@ -3,19 +3,6 @@ import enum
 
 from app import db
 
-class types(enum.Enum):
-    cat = 1
-    dog = 2
-
-class roles(enum.Enum):
-    user = 1
-    admin = 2
-
-class documents(enum.Enum):
-    kal = 1
-    shmal = 2
-    onal = 3
-    
 class AnimalPhoto(db.Model):
     __tablename__ = 'animal_photo'
     id = db.Column(db.Integer, primary_key=True)
@@ -42,12 +29,12 @@ class AnimalPhoto(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return "item with id{0}".format(self.id)
+        return "item with id{0} ".format(self.id)
 
 class AnimalType(db.Model):
     __tablename__ = 'animal_type'
     id = db.Column(db.Integer, primary_key=True)
-    atype = db.Column(db.Enum(types), index=True, nullable=False)
+    atype = db.Column(db.String(15), index=True, nullable=False)
 
     def get_all_types():
         return AnimalType.query.all()
@@ -70,7 +57,7 @@ class AnimalType(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return "item with id {0}".format(self.id)
+        return "item with id {0} has type {1}".format(self.id, self.atype)
 
 class AnimalBreed(db.Model):
     __tablename__ = 'animal_breed'
@@ -101,7 +88,8 @@ class AnimalBreed(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return "item with id{0}".format(self.id)
+        return "item with id{0} ".format(self.id)
+
 
 class Animal(db.Model):
     __tablename__ = 'animal'
@@ -110,21 +98,21 @@ class Animal(db.Model):
     nickname = db.Column(db.String(45), index=True, nullable=False)
     male = db.Column(db.Integer, index=True, nullable=False)
     special_signs = db.Column(db.String(250))
-    size = db.Column(db.Enum(types))
     character = db.Column(db.String(45))
     animal_type = db.Column(db.Integer, db.ForeignKey('animal_type.id'), nullable=False)
     animal_breed = db.Column(db.Integer, db.ForeignKey('animal_breed.id'), nullable=False)
     shelter = db.Column(db.Integer, db.ForeignKey('shelter.id'), nullable=False)
     ready = db.Column(db.Integer, index=True, nullable=False)
 
-    def get_all_animals():
-        return Animal.query.all()
+    def get_all_animals(filters):
+        for attr, value in filters.items():
+            return Animal.query.filter(attr == value)
 
     def get_animal(_id):
         return Animal.query.filter_by(id=_id).first()
 
-    def add_animal(_age, _nickname, _male, _special_signs, _size, _character, _animal_type, _animal_breed, _shelter, _ready):
-        new_animal = Animal(age=_age, nickname=_nickname, male=_male, special_signs=_special_signs, size=_size, character=_character, animal_type=_animal_type, animal_breed=_animal_breed, shelter=_shelter, ready=_ready)
+    def add_animal(_age, _nickname, _male, _special_signs, _character, _animal_type, _animal_breed, _shelter, _ready):
+        new_animal = Animal(age=_age, nickname=_nickname, male=_male, special_signs=_special_signs, character=_character, animal_type=_animal_type, animal_breed=_animal_breed, shelter=_shelter, ready=_ready)
         db.session.add(new_animal)
         db.session.commit()
 
@@ -133,8 +121,12 @@ class Animal(db.Model):
         db.session.commit()
         return bool(result)
 
+    def update_animal(_id, _age, _nickname, _male, _special_signs, _character, _animal_type, _animal_breed, _shelter, _ready):
+        new_animal = AnimalType.query.filter_by(id=_id).first()
+        db.session.commit()
+
     def __repr__(self):
-        return "item with id{0}".format(self.id)
+        return "item with id{0} ".format(self.id)
 
 class Shelter(db.Model):
     __tablename__ = 'shelter'
@@ -168,7 +160,20 @@ class Shelter(db.Model):
         return bool(result)
 
     def __repr__(self):
-        return "item with name{0}".format(self.name)
+        return "item with name {0} id {1}".format(self.name, self.id)
+
+class Role(db.Model):
+    __tablename__ = 'role'
+    id = db.Column(db.Integer, primary_key=True)
+    role = db.Column(db.String(31), nullable=False)
+
+    def add_role(_role):
+        new_role = Role(role=_role)
+        db.session.add(new_role)
+        db.session.commit()
+
+    def __repr__(self):
+        return "role {0}".format(self.role)
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -177,7 +182,7 @@ class User(db.Model):
     password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(45), index=True, nullable=False)
     surname = db.Column(db.String(45), index=True, nullable=False)
-    role = db.Column(db.Enum(roles), index=True)
+    role = db.Column(db.Integer, db.ForeignKey('role.id'), index=True)
     shelter = db.Column(db.Integer, db.ForeignKey('shelter.id'), nullable=False)
 
     def get_all_users():
@@ -197,7 +202,7 @@ class User(db.Model):
         return bool(result)
 
     def __repr__(self):
-        return "item with id{0}".format(self.id)
+        return "item with id{0} ".format(self.id)
 
 class PetRequest(db.Model):
     __tablename__ = 'pet_request'
@@ -214,7 +219,7 @@ class PetRequest(db.Model):
         return PetRequest.query.filter_by(id=_id).first()
 
     def add_request(_name, _phone, _comment, _animal):
-        new_request(name=_name, phone=_phone, comment=_comment, animal=_animal)
+        new_request = PetRequest(name=_name, phone=_phone, comment=_comment, animal=_animal)
         db.session.add(new_request)
         db.session.commit()
 
@@ -224,7 +229,17 @@ class PetRequest(db.Model):
         return bool(result)
 
     def __repr__(self):
-        return "item with id{0}".format(self.id)
+        return "item with id{0} ".format(self.id)
+
+class DocumentType(db.Model):
+    __tablename__ = 'document_type'
+    id = db.Column(db.Integer, primary_key=True)
+    dtype = db.Column(db.String(31), nullable=False)
+
+    def add_doc_type(_dtype):
+        new_doc_type = DocumentType(dtype=_dtype)
+        db.session.add(new_doc_type)
+        db.session.commit()
 
 class Document(db.Model):
     __tablename__ = 'document'
@@ -232,23 +247,23 @@ class Document(db.Model):
     date = db.Column(db.DateTime, index=True, nullable=False)
     link_to_document = db.Column(db.String(2000), nullable=False)
     animal = db.Column(db.Integer, index=True, nullable=False)
-    document_type = db.Column(db.Enum(documents), index=True)
+    document_type = db.Column(db.Integer, db.ForeignKey('document_type.id'), index=True)
 
-    def get_all_animals():
-        return Animal.query.all()
+    def get_all_document():
+        return Document.query.all()
 
-    def get_animals(_id):
-        return Animal.query.filter_by(id=_id).first()
+    def get_document(_id):
+        return Document.query.filter_by(id=_id).first()
 
-    def add_animal(_age, _nickname, _male, _special_signs, _size, _character, _animal_type, _animal_breed, _shelter, _ready):
-        new_animal = Animal(age=_age, nickname=_nickname, male=_male, special_signs=_special_signs, size=_size, character=_character, animal_type=_animal_type, animal_breed=_animal_breed, shelter=_shelter, ready=_ready)
+    def add_document(_date, _link_to_document, _animal, _document_type):
+        new_document = Document(date=_date, link_to_document=_link_to_document, animal=_animal, document_type=_document_type)
         db.session.add(new_animal)
         db.session.commit()
 
-    def delete_animal(_id):
-        result = Animal.query.filter_by(id=_id).delete()
+    def delete_document(_id):
+        result = Document.query.filter_by(id=_id).delete()
         db.session.commit()
         return bool(result)
 
     def __repr__(self):
-        return "item with id{0}".format(self.id)
+        return "item with id{0} ".format(self.id)
