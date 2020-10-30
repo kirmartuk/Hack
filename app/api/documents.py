@@ -1,20 +1,19 @@
 import os
+from app.api import bp
 from flask import Flask, request, abort, jsonify
 from flask import send_from_directory, render_template
-from flask_swagger import swagger
+from app import app
 from flasgger import Swagger
 
-
 UPLOAD_DIRECTORY = os.getcwd() + "/src/"
-app = Flask(__name__)
-swagger = Swagger(app)
-
 
 if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
+    
+swagger = Swagger(app)
 
 
-@app.route("/files")
+@bp.route("/files")
 def list_files():
     """list files on the server
     ---
@@ -30,7 +29,7 @@ def list_files():
     return jsonify(files)
 
 
-@app.route("/files/<path:path>")
+@bp.route("/files/<path:path>")
 def get_file(path):
     """Download a file.
     ---
@@ -46,7 +45,7 @@ def get_file(path):
     return send_from_directory(UPLOAD_DIRECTORY, path, as_attachment=True)
 
 
-@app.route("/files/<filename>", methods=["POST"])
+@bp.route("/files/<filename>", methods=["POST"])
 def post_file(filename):
     """Upload a file
      ---
@@ -69,7 +68,3 @@ def post_file(filename):
 
     # Return 201 CREATED
     return "", 201
-
-
-if __name__ == '__main__':
-    app.run(threaded=True, port=5000, debug=True)
