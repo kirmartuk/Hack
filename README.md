@@ -7,3 +7,9 @@ https://moscow-hackaton.herokuapp.com/
 # 3 - Visit http://localhost:5000/
 ***
 ## Api documentation >> http://localhost:5000/apidocs
+___
+# System requirements
+### Debian/Ubuntu
+    sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
+### Red Hat / CentOS
+    sudo yum install python3-devel mysql-devel
