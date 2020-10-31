@@ -132,6 +132,9 @@ class Shelter(db.Model):
     daddy: str
     director: str
     cares: str
+    name: str
+    submission: str
+    phone: str
     
     __tablename__ = 'shelter'
     id = db.Column(db.Integer, primary_key=True)
@@ -141,7 +144,7 @@ class Shelter(db.Model):
     cares = db.Column(db.String(63), index=True)
     name = db.Column(db.String(63), index=True)
     submission = db.Column(db.String(127), index=True)
-    phone = db.Column(db.String(15), index=True)
+    phone = db.Column(db.String(31), index=True)
 
     def get_all_shelters():
         return Shelter.query.all()
@@ -149,9 +152,10 @@ class Shelter(db.Model):
     def get_shelter(_id):
         return Shelter.query.filter_by(id=_id).first()
 
-    def set_shelters(shelters):
-        for sh in shelters:
-            new_shelter = Shelter(address=sh.address, name=sh.shortName, submission=sh.subortination, phone=sh.phoneNumber)
+    def set_shelters(shelters):        
+        for sh in shelters["shelters"]:
+            print(sh)
+            new_shelter = Shelter(address=sh['address'], name=sh['shortName'], submission=sh['subortination'], phone=sh['phoneNumber'])
             db.session.add(new_shelter)
             try:
                 db.session.commit()
@@ -256,11 +260,11 @@ class Animal(db.Model):
             db.session.rollback()
 
     def add_json(an):
-        if an.sex == "Мужской":
+        if an['sex'] == "Мужской":
             an.male = 1
         else:
             an.male = 0
-        new_animal = Animal(idcard=an.cardId, age=an.age, weight=an.weight, nickname=an.nickname, male=an.male, special_signs=an.specialSigns, character=an.character, animal_type=an.animalType, animal_breed=an.animalBreed, shelter=an.shelter, color=an.color, fur=an.wool, ears=an.ears, tail=an.tail, size=an.size, cell=an.cell, idmark=an.idMarker, sterilized=an.sterilized, veterinarian=an.veterinarian, ready=an.readyToPickUp)
+        new_animal = Animal(idcard=an['cardId'] age=an['age'] weight=an['weight'] nickname=an['nickname'] male=an['male'] special_signs=an['specialSigns'] character=an['character'] animal_type=an['animalType'] animal_breed=an['animalBreed'] shelter=an['shelter'] color=an['color'] fur=an['wool'] ears=an['ears'] tail=an['tail'] size=an['size'] cell=an['cell'] idmark=an['idMarker'] sterilized=an['sterilized'] veterinarian=an['veterinarian'] ready=an['readyToPickUp'])
         db.session.add(new_animal)
         try:
             db.session.commit()
@@ -278,11 +282,11 @@ class Animal(db.Model):
         return bool(result)
 
     def update_json(_id, an):
-        if an.sex == "Мужской":
+        if an['sex'] == "Мужской":
             an.male = 1
         else:
             an.male = 0
-        new_animal = Animal(idcard=an.cardId, age=an.age, weight=an.weight, nickname=an.nickname, male=an.male, special_signs=an.specialSigns, character=an.character, animal_type=an.animalType, animal_breed=an.animalBreed, shelter=an.shelter, color=an.color, fur=an.wool, ears=an.ears, tail=an.tail, size=an.size, cell=an.cell, idmark=an.idMarker, sterilized=an.sterilized, veterinarian=an.veterinarian, ready=an.readyToPickUp)
+        new_animal = Animal(idcard=an['cardId'] age=an['age'] weight=an['weight'] nickname=an['nickname'] male=an['male'] special_signs=an['specialSigns'] character=an['character'] animal_type=an['animalType'] animal_breed=an['animalBreed'] shelter=an['shelter'] color=an['color'] fur=an['wool'] ears=an['ears'] tail=an['tail'] size=an['size'] cell=an['cell'] idmark=an['idMarker'] sterilized=an['sterilized'] veterinarian=an['veterinarian'] ready=an.['readyToPickUp'])
         to_replace = Animal.query.filter_by(id=_id).first()
         to_replace = new_animal
         try:
