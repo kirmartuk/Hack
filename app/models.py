@@ -125,20 +125,48 @@ class AnimalBreed(db.Model):
     def __repr__(self):
         return "item with id{0} ".format(self.id)
 
+@dataclass
 class Shelter(db.Model):
+    id: int
+    address: str
+    daddy: str
+    director: str
+    cares: str
+    
     __tablename__ = 'shelter'
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(127), index=True)
     daddy = db.Column(db.String(127), index=True)
     director = db.Column(db.String(63), index=True)
     cares = db.Column(db.String(63), index=True)
-    #animal = db.Column(db.Integer, db.ForeignKey('animal.id'))
+    name = db.Column(db.String(63), index=True)
+    submission = db.Column(db.String(127), index=True)
+    phone = db.Column(db.String(15), index=True)
 
     def get_all_shelters():
         return Shelter.query.all()
 
     def get_shelter(_id):
         return Shelter.query.filter_by(id=_id).first()
+
+    def set_shelters(shelters):
+        for sh in shelters:
+            new_shelter = Shelter(address=sh.address, name=sh.shortName, submission=sh.subortination, phone=sh.phoneNumber)
+            db.session.add(new_shelter)
+            try:
+                db.session.commit()
+            except Exception as e:
+                print(e)
+                db.session.rollback()
+    
+    def add_json(sh):
+        new_shelter = Shelter(address=sh.address, name=sh.shortName, submission=sh.subortination, phone=sh.phoneNumber)
+        db.session.add(new_shelter)
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def add_shelter(_address, _daddy, _director, _cares):
         new_shelter = Shelter(name=_name, daddy=_daddy, director=_director, cares=_cares)
@@ -188,7 +216,7 @@ class Animal(db.Model):
     __tablename__ = 'animal'
     id = db.Column(db.Integer, primary_key=True)
     idcard = db.Column(db.String(15), index=True, nullable=False)
-    age = db.Column(db.Integer, index=True, nullable=False)
+    age = db.Column(db.String(63), index=True, nullable=False)
     weight = db.Column(db.Integer, index=True, nullable=False)
     nickname = db.Column(db.String(45), index=True, nullable=False)
     male = db.Column(db.Integer, index=True, nullable=False)
@@ -228,7 +256,17 @@ class Animal(db.Model):
             db.session.rollback()
 
     def add_json(an):
-        new_animal = Animal(idcard=an.)
+        if an.sex == "Мужской":
+            an.male = 1
+        else:
+            an.male = 0
+        new_animal = Animal(idcard=an.cardId, age=an.age, weight=an.weight, nickname=an.nickname, male=an.male, special_signs=an.specialSigns, character=an.character, animal_type=an.animalType, animal_breed=an.animalBreed, shelter=an.shelter, color=an.color, fur=an.wool, ears=an.ears, tail=an.tail, size=an.size, cell=an.cell, idmark=an.idMarker, sterilized=an.sterilized, veterinarian=an.veterinarian, ready=an.readyToPickUp)
+        db.session.add(new_animal)
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def delete(_id):
         result = Animal.query.filter_by(id=_id).delete()
@@ -239,10 +277,22 @@ class Animal(db.Model):
             db.session.rollback()
         return bool(result)
 
-    
+    def update_json(_id, an):
+        if an.sex == "Мужской":
+            an.male = 1
+        else:
+            an.male = 0
+        new_animal = Animal(idcard=an.cardId, age=an.age, weight=an.weight, nickname=an.nickname, male=an.male, special_signs=an.specialSigns, character=an.character, animal_type=an.animalType, animal_breed=an.animalBreed, shelter=an.shelter, color=an.color, fur=an.wool, ears=an.ears, tail=an.tail, size=an.size, cell=an.cell, idmark=an.idMarker, sterilized=an.sterilized, veterinarian=an.veterinarian, ready=an.readyToPickUp)
+        to_replace = Animal.query.filter_by(id=_id).first()
+        to_replace = new_animal
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
-    def update(_idcard, _age, _weight, _nickname, _male, _special_signs, _character, _animal_type, _animal_breed, _shelter, _color, _fur, _ears, _tail, _size, _cell, _idmark, _sterilized, _veterinarian, _ready):
-        new_animal = AnimalType.query.filter_by(id=_id).first()
+    def update(_id, _idcard, _age, _weight, _nickname, _male, _special_signs, _character, _animal_type, _animal_breed, _shelter, _color, _fur, _ears, _tail, _size, _cell, _idmark, _sterilized, _veterinarian, _ready):
+        new_animal = Animal.query.filter_by(id=_id).first()
         new_animal.idcard=_idcard
         new_animal.age=_age
         new_animal.weight=_wight
@@ -263,6 +313,33 @@ class Animal(db.Model):
         new_animal.sterilized=_sterilized
         new_animal.veterinarian=_veterinarian
         new_animal.ready=_ready
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+
+@dataclass
+class History(db.Model):
+    id: int
+    title: str
+    body: str
+    date: str
+    doc: str
+    
+    __tablename__ = 'history'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(63), index=True)
+    body = db.Column(db.String(1023))
+    date = db.Column(db.String(31), index=True)
+    doc = db.Column(db.String(511))
+
+    def get_by_id(_id):
+        return History.query.filter_by(id=_id).first()
+
+    def add(an):
+        new_event = History(title=an.title, body=an.body, date=an.date, doc=an.doc)
+        db.session.add(new_event)
         try:
             db.session.commit()
         except Exception as e:
