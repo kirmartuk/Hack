@@ -7,7 +7,7 @@ from app.api import bp
 def get_animals():
     return jsonify(Animal.get_all())
 
-@bp.route('/animals/<int:id>', methods=['POST'])
+@bp.route('/animals/<int:id>', methods=['GET'])
 def get_animal(id):
     return jsonify(Animal.get_by_id(id))
 
