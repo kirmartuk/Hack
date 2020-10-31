@@ -50,8 +50,11 @@ class AnimalType(db.Model):
     def get_all_types():
         return AnimalType.query.all()
 
-    def get_tykpe(_id):
+    def get_type(_id):
         return AnimalType.query.filter_by(id=_id).first()
+
+    def get_id_by_type(_atype):
+        return AnimalType.query.filter_by(atype=_atype).fist()
 
     def add_type(_type):
         new_type = AnimalType(atype=_type)
@@ -93,6 +96,9 @@ class AnimalBreed(db.Model):
 
     def get_breed(_id):
         return AnimalBreed.query.filter_by(id=_id).first()
+
+    def get_id_by_breed(_breed):
+        return AnimalBreed.query.filter_by(breed=_breed).first().id
 
     def add_breed(_breed, _animal_type):
         new_breed = AnimalBreed(breed=_breed, animal_type=_animal_type)
@@ -193,8 +199,7 @@ class Shelter(db.Model):
             db.session.rollback()
         return bool(result)
 
-    def __repr__(self):
-        return "item with name {0} id {1}".format(self.name, self.id)
+    
 
 @dataclass
 class Animal(db.Model):
