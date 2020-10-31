@@ -264,7 +264,7 @@ class Animal(db.Model):
             an.male = 1
         else:
             an.male = 0
-        new_animal = Animal(idcard=an['cardId'] age=an['age'] weight=an['weight'] nickname=an['nickname'] male=an['male'] special_signs=an['specialSigns'] character=an['character'] animal_type=an['animalType'] animal_breed=an['animalBreed'] shelter=an['shelter'] color=an['color'] fur=an['wool'] ears=an['ears'] tail=an['tail'] size=an['size'] cell=an['cell'] idmark=an['idMarker'] sterilized=an['sterilized'] veterinarian=an['veterinarian'] ready=an['readyToPickUp'])
+        new_animal = Animal(idcard=an['cardId'], age=an['age'], weight=an['weight'], nickname=an['nickname'], male=an['male'], special_signs=an['specialSigns'], character=an['character'], animal_type=an['animalType'], animal_breed=an['animalBreed'], shelter=an['shelter'], color=an['color'], fur=an['wool'], ears=an['ears'], tail=an['tail'], size=an['size'], cell=an['cell'], idmark=an['idMarker'], sterilized=an['sterilized'], veterinarian=an['veterinarian'], ready=an['readyToPickUp'])
         db.session.add(new_animal)
         try:
             db.session.commit()
@@ -286,7 +286,7 @@ class Animal(db.Model):
             an.male = 1
         else:
             an.male = 0
-        new_animal = Animal(idcard=an['cardId'] age=an['age'] weight=an['weight'] nickname=an['nickname'] male=an['male'] special_signs=an['specialSigns'] character=an['character'] animal_type=an['animalType'] animal_breed=an['animalBreed'] shelter=an['shelter'] color=an['color'] fur=an['wool'] ears=an['ears'] tail=an['tail'] size=an['size'] cell=an['cell'] idmark=an['idMarker'] sterilized=an['sterilized'] veterinarian=an['veterinarian'] ready=an.['readyToPickUp'])
+        new_animal = Animal(idcard=an['cardId'], age=an['age'], weight=an['weight'], nickname=an['nickname'], male=an['male'], special_signs=an['specialSigns'], character=an['character'], animal_type=an['animalType'], animal_breed=an['animalBreed'], shelter=an['shelter'], color=an['color'], fur=an['wool'], ears=an['ears'], tail=an['tail'], size=an['size'], cell=an['cell'], idmark=an['idMarker'], sterilized=an['sterilized'], veterinarian=an['veterinarian'], ready=an['readyToPickUp'])
         to_replace = Animal.query.filter_by(id=_id).first()
         to_replace = new_animal
         try:
@@ -404,6 +404,7 @@ class User(db.Model):
     def __repr__(self):
         return "item with id{0} ".format(self.id)
 
+@dataclass
 class PetRequest(db.Model):
     __tablename__ = 'pet_request'
     id = db.Column(db.Integer, primary_key=True)
