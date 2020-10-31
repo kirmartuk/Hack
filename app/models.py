@@ -1,6 +1,8 @@
 import json
 import enum
 
+from flask import Flask, jsonify
+from dataclasses import dataclass
 from app import db
 
 class AnimalPhoto(db.Model):
@@ -17,16 +19,25 @@ class AnimalPhoto(db.Model):
     def add_photo(_link):
         new_photo = AnimalPhoto(link_to_photo=_link)
         db.session.add(new_photo)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except DatabaseError:
+            db.session.rollback()
 
     def delete_photo(_id):
         result = AnimalPhoto.query.filter_by(id=_id).delete()
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
         return bool(result)
 
     def update_photo(_id, _link):
         AnimalPhoto.query.filter_by(id=_id).first().link_to_photo = _link
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
 
     def __repr__(self):
         return "item with id{0} ".format(self.id)
@@ -39,22 +50,34 @@ class AnimalType(db.Model):
     def get_all_types():
         return AnimalType.query.all()
 
-    def get_type(_id):
+    def get_tykpe(_id):
         return AnimalType.query.filter_by(id=_id).first()
 
     def add_type(_type):
         new_type = AnimalType(atype=_type)
         db.session.add(new_type)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def delete_type(_id):
         result = AnimalType.query.filter_by(id=_id).delete()
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
         return bool(result)
 
     def update_type(_id, _type):
         AnimalType.query.filter_by(id=_id).first().atype = _type
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def __repr__(self):
         return "item with id {0} has type {1}".format(self.id, self.atype)
@@ -74,56 +97,30 @@ class AnimalBreed(db.Model):
     def add_breed(_breed, _animal_type):
         new_breed = AnimalBreed(breed=_breed, animal_type=_animal_type)
         db.session.add(new_breed)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def delete_breed(_id):
         result = AnimalBreed.query.filter_by(id=_id).delete()
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
         return bool(result)
 
     def update_breed(_id, _breed, _animal_type):
         animal = AnimalBreed.query.filter_by(id=_id).first()
         animal.breed = _breed
         animal.animal_type = _animal_type
-        db.session.commit()
-
-    def __repr__(self):
-        return "item with id{0} ".format(self.id)
-
-
-class Animal(db.Model):
-    __tablename__ = 'animal'
-    id = db.Column(db.Integer, primary_key=True)
-    age = db.Column(db.Integer, index=True, nullable=False)
-    nickname = db.Column(db.String(45), index=True, nullable=False)
-    male = db.Column(db.Integer, index=True, nullable=False)
-    special_signs = db.Column(db.String(250))
-    character = db.Column(db.String(45))
-    animal_type = db.Column(db.Integer, db.ForeignKey('animal_type.id'), nullable=False)
-    animal_breed = db.Column(db.Integer, db.ForeignKey('animal_breed.id'), nullable=False)
-    shelter = db.Column(db.Integer, db.ForeignKey('shelter.id'), nullable=False)
-    ready = db.Column(db.Integer, index=True, nullable=False)
-
-    def get_all_animals(filters):
-        for attr, value in filters.items():
-            return Animal.query.filter(attr == value)
-
-    def get_animal(_id):
-        return Animal.query.filter_by(id=_id).first()
-
-    def add_animal(_age, _nickname, _male, _special_signs, _character, _animal_type, _animal_breed, _shelter, _ready):
-        new_animal = Animal(age=_age, nickname=_nickname, male=_male, special_signs=_special_signs, character=_character, animal_type=_animal_type, animal_breed=_animal_breed, shelter=_shelter, ready=_ready)
-        db.session.add(new_animal)
-        db.session.commit()
-
-    def delete_animal(_id):
-        result = Animal.query.filter_by(id=_id).delete()
-        db.session.commit()
-        return bool(result)
-
-    def update_animal(_id, _age, _nickname, _male, _special_signs, _character, _animal_type, _animal_breed, _shelter, _ready):
-        new_animal = AnimalType.query.filter_by(id=_id).first()
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def __repr__(self):
         return "item with id{0} ".format(self.id)
@@ -131,17 +128,11 @@ class Animal(db.Model):
 class Shelter(db.Model):
     __tablename__ = 'shelter'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
-    global_id = db.Column(db.Integer, index=True, nullable=False)
-    departmental_affiliation = db.Column(db.Integer, index=True, nullable=False)
-    adm_area = db.Column(db.String(255), index=True, nullable=False)
-    district = db.Column(db.String(127), index=True, nullable=False)
-    address = db.Column(db.String(255), index=True, nullable=False)
-    phone = db.Column(db.String(15), nullable=False)
-    chief_name = db.Column(db.String(127), nullable=False)
-    working_hours = db.Column(db.String(511), nullable=False)
-    clarification_of_work = db.Column(db.String(511), index=True)
-    geo_data = db.Column(db.String(255), nullable=False)
+    address = db.Column(db.String(127), index=True)
+    daddy = db.Column(db.String(127), index=True)
+    director = db.Column(db.String(63), index=True)
+    cares = db.Column(db.String(63), index=True)
+    #animal = db.Column(db.Integer, db.ForeignKey('animal.id'))
 
     def get_all_shelters():
         return Shelter.query.all()
@@ -149,18 +140,134 @@ class Shelter(db.Model):
     def get_shelter(_id):
         return Shelter.query.filter_by(id=_id).first()
 
-    def add_shelter(_name, _global_id, _departamental_affiliation, _adm_area, _district, _address, _phone, _chief_name, _working_hours, _clarification_of_work, _geo_data):
-        new_shelter = Shelter(name=_name, global_id=_global_id, departmental_affiliation=_departamental_affiliation, adm_area=_adm_area, district=_district, address=_address, phone=_phone, chief_name=_chief_name, working_hours=_working_hours, clarification_of_work=_clarification_of_work, geo_data=_geo_data)
+    def add_shelter(_address, _daddy, _director, _cares):
+        new_shelter = Shelter(name=_name, daddy=_daddy, director=_director, cares=_cares)
         db.session.add(new_shelter)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def delete_shelter(_id):
         result = Shelter.query.filter_by(id=_id).delete()
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
         return bool(result)
 
     def __repr__(self):
         return "item with name {0} id {1}".format(self.name, self.id)
+
+@dataclass
+class Animal(db.Model):
+    id: int
+    idcard: str
+    age: int
+    weight: int
+    nickname: str
+    male: int
+    special_signs: str
+    character: str
+    animal_type: int
+    animal_breed: int
+    shelter: int
+    color: str
+    fur: str
+    ears: str
+    tail: str
+    size: str
+    cell: int
+    idmark: str
+    sterilized: str
+    veterinarian: str
+    ready: int
+    
+    __tablename__ = 'animal'
+    id = db.Column(db.Integer, primary_key=True)
+    idcard = db.Column(db.String(15), index=True, nullable=False)
+    age = db.Column(db.Integer, index=True, nullable=False)
+    weight = db.Column(db.Integer, index=True, nullable=False)
+    nickname = db.Column(db.String(45), index=True, nullable=False)
+    male = db.Column(db.Integer, index=True, nullable=False)
+    special_signs = db.Column(db.String(250))
+    character = db.Column(db.String(45))
+    animal_type = db.Column(db.Integer, db.ForeignKey('animal_type.id'), nullable=False)
+    animal_breed = db.Column(db.Integer, db.ForeignKey('animal_breed.id'), nullable=False)
+    shelter = db.Column(db.Integer, db.ForeignKey('shelter.id'), nullable=False)
+    color = db.Column(db.String(31), index=True, nullable=False)
+    fur = db.Column(db.String(15), index=True, nullable=False)
+    ears = db.Column(db.String(15), index=True, nullable=False)
+    tail = db.Column(db.String(15), index=True, nullable=False)
+    size = db.Column(db.String(15), index=True, nullable=False)
+    cell = db.Column(db.Integer, index=True, nullable=False)
+    idmark = db.Column(db.String(31), index=True, nullable=False)
+    sterilized = db.Column(db.String(63), index=True, nullable=False)
+    veterinarian = db.Column(db.String(63), index=True, nullable=False)
+    ready = db.Column(db.Integer, index=True, nullable=False)
+
+    def get_all():
+        return Animal.query.all()
+
+    def filter(filters):
+        for attr, value in filters.items():
+            return Animal.query.filter(attr == value)
+
+    def get_by_id(_id):
+        return Animal.query.filter_by(id=_id).first()
+
+    def add_animal(_idcard, _age, _weight, _nickname, _male, _special_signs, _character, _animal_type, _animal_breed, _shelter, _color, _fur, _ears, _tail, _size, _cell, _idmark, _sterilized, _veterinarian, _ready):
+        new_animal = Animal(idcard=_idcard, age=_age, weight=_weight,  nickname=_nickname, male=_male, special_signs=_special_signs, character=_character, animal_type=_animal_type, animal_breed=_animal_breed, shelter=_shelter, color=_color, fur=_fur, ears=_ears, tail=_tail, size=_size, cell=_cell, idmark=_idmark, sterilized=_sterilized, veterinarian=_veterinarian, ready=_ready)
+        db.session.add(new_animal)
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+
+    def add_json(an):
+        new_animal = Animal(idcard=an.)
+
+    def delete(_id):
+        result = Animal.query.filter_by(id=_id).delete()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+        return bool(result)
+
+    
+
+    def update(_idcard, _age, _weight, _nickname, _male, _special_signs, _character, _animal_type, _animal_breed, _shelter, _color, _fur, _ears, _tail, _size, _cell, _idmark, _sterilized, _veterinarian, _ready):
+        new_animal = AnimalType.query.filter_by(id=_id).first()
+        new_animal.idcard=_idcard
+        new_animal.age=_age
+        new_animal.weight=_wight
+        new_animal.nickname=_nickname
+        new_animal.male=_male
+        new_animal.special_signs=_special_signs
+        new_animal.character=_character
+        new_animal.animal_type=_animal_type
+        new_animal.animal_breed=_animal_breed
+        new_animal.shelter=_shelter
+        new_animal.color=_color
+        new_animal.fur=_fur
+        new_animal.ears=_ears
+        new_animal.tail=_tail
+        new_animal.size=_size
+        new_animal.cell=_cell
+        new_animal.idmark=_idmark
+        new_animal.sterilized=_sterilized
+        new_animal.veterinarian=_veterinarian
+        new_animal.ready=_ready
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
 class Role(db.Model):
     __tablename__ = 'role'
@@ -170,7 +277,11 @@ class Role(db.Model):
     def add_role(_role):
         new_role = Role(role=_role)
         db.session.add(new_role)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def __repr__(self):
         return "role {0}".format(self.role)
@@ -194,11 +305,19 @@ class User(db.Model):
     def add_user(_login, _password, _name, _surname, _role, _shelter):
         new_user = User(login=_login, password=_password, name=_name, surname=_surname, role=_role, shelter=_shelter)
         db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def delete_user(_id):
         result = User.query.filter_by(id=_id).delete()
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
         return bool(result)
 
     def __repr__(self):
@@ -221,15 +340,50 @@ class PetRequest(db.Model):
     def add_request(_name, _phone, _comment, _animal):
         new_request = PetRequest(name=_name, phone=_phone, comment=_comment, animal=_animal)
         db.session.add(new_request)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def delete_request(_id):
         result = PetRequest.query.filter_by(id=_id).delete()
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
         return bool(result)
 
     def __repr__(self):
         return "item with id{0} ".format(self.id)
+
+class Catching(db.Model):
+    __tablename__ = 'catching'
+    id = db.Column(db.Integer, primary_key=True)
+    act = db.Column(db.String(63), index=True, nullable=False)
+    date = db.Column(db.DateTime, index=True, nullable=False)
+    district = db.Column(db.String(31), index=True, nullable=False)
+    act1 = db.Column(db.String(63), index=True, nullable=False)
+    address = db.Column(db.String(127), index=True, nullable=False)
+    animal = db.Column(db.Integer, db.ForeignKey('animal.id'), nullable=False)
+
+class Moving(db.Model):
+    __tablename__ = 'moving'
+    id = db.Column(db.Integer, primary_key=True)
+    act = db.Column(db.String(63), index=True, nullable=False)
+    date = db.Column(db.String(31), index=True, nullable=False)
+    reason = db.Column(db.String(63), index=True, nullable=False)
+    contract = db.Column(db.String(63), index=True, nullable=False)
+    animal = db.Column(db.Integer, db.ForeignKey('animal.id'), nullable=False)
+
+class Owner(db.Model):
+    __tablename__ = 'owner'
+    id = db.Column(db.Integer, primary_key=True)
+    yurik = db.Column(db.String(511), nullable=False)
+    fizik = db.Column(db.String(511), nullable=False)
+    fio = db.Column(db.String(61), nullable=False)
+    animal = db.Column(db.Integer, db.ForeignKey('animal.id'), nullable=False)
 
 class DocumentType(db.Model):
     __tablename__ = 'document_type'
@@ -239,15 +393,19 @@ class DocumentType(db.Model):
     def add_doc_type(_dtype):
         new_doc_type = DocumentType(dtype=_dtype)
         db.session.add(new_doc_type)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
 class Document(db.Model):
     __tablename__ = 'document'
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, index=True, nullable=False)
     link_to_document = db.Column(db.String(2000), nullable=False)
-    animal = db.Column(db.Integer, index=True, nullable=False)
-    document_type = db.Column(db.Integer, db.ForeignKey('document_type.id'), index=True)
+    animal = db.Column(db.Integer, db.ForeignKey('animal.id'), nullable=False)
+    document_type = db.Column(db.Integer, db.ForeignKey('document_type.id'), nullable=False)
 
     def get_all_document():
         return Document.query.all()
@@ -258,11 +416,19 @@ class Document(db.Model):
     def add_document(_date, _link_to_document, _animal, _document_type):
         new_document = Document(date=_date, link_to_document=_link_to_document, animal=_animal, document_type=_document_type)
         db.session.add(new_animal)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
 
     def delete_document(_id):
         result = Document.query.filter_by(id=_id).delete()
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
         return bool(result)
 
     def __repr__(self):
