@@ -54,7 +54,7 @@ class AnimalType(db.Model):
         return AnimalType.query.filter_by(id=_id).first()
 
     def get_id_by_type(_atype):
-        return AnimalType.query.filter_by(atype=_atype).fist()
+        return AnimalType.query.filter_by(atype=_atype).first().id
 
     def add_type(_type):
         new_type = AnimalType(atype=_type)
