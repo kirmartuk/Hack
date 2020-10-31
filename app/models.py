@@ -199,8 +199,6 @@ class Shelter(db.Model):
             db.session.rollback()
         return bool(result)
 
-    
-
 @dataclass
 class Animal(db.Model):
     id: int
@@ -338,6 +336,7 @@ class History(db.Model):
     body: str
     date: str
     doc: str
+    animal: int
     
     __tablename__ = 'history'
     id = db.Column(db.Integer, primary_key=True)
@@ -345,12 +344,16 @@ class History(db.Model):
     body = db.Column(db.String(1023))
     date = db.Column(db.String(31), index=True)
     doc = db.Column(db.String(511))
+    animal = db.Column(db.Integer, db.ForeignKey('animal.id'), index=True)
 
     def get_by_id(_id):
         return History.query.filter_by(id=_id).first()
 
+    def get_events_for(_animal):
+        return History.query.filter_by(animal=_animal).all()
+
     def add(an):
-        new_event = History(title=an.title, body=an.body, date=an.date, doc=an.doc)
+        new_event = History(title=an['title'], body=an['body'], date=an['date'], doc=an['doc'], animal=an['animalId'])
         db.session.add(new_event)
         try:
             db.session.commit()

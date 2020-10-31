@@ -11,11 +11,4 @@ def get_shelters():
 def set_shelters():
     data = request.get_json()
     Shelter.set_shelters(data)
-    return('ok')
-
-@bp.route('/addshelter', methods=['POST'])
-def add_shelter():
-    data = request
-    print(data)
-    return('ok')
-    
+    return Response("", 201, mimetype='application/json')
