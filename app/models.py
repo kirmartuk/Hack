@@ -149,8 +149,11 @@ class Shelter(db.Model):
     def get_all_shelters():
         return Shelter.query.all()
 
-    def get_shelter(_id):
+    def get_by_id(_id):
         return Shelter.query.filter_by(id=_id).first()
+
+    def get_id_by_address(_address):
+        return Shelter.query.filter_by(address=_address).first().id
 
     def set_shelters(shelters):        
         for sh in shelters["shelters"]:
