@@ -5,9 +5,6 @@ from app.api import bp
 
 @bp.route('/history/<int:id>', methods=['GET'])
 def get_events_for_animal(id):    
-    return jsonify(History.get_events_for(id))
-    
-def get_events_for_animal(id):
     try:
         return jsonify(History.get_events_for(id))
     except:
