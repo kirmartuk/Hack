@@ -6,7 +6,6 @@ from app.api import bp
 @bp.route('/animals', methods=['GET'])
 def get_animals():
     if not request.args:
-        print('no filter')
         return jsonify(Animal.get_all())
     else:
         return jsonify(Animal.filter(request.args))
@@ -14,6 +13,13 @@ def get_animals():
 @bp.route('/animals/<int:id>', methods=['GET'])
 def get_animal(id):
     return jsonify(Animal.get_by_id(id))
+
+@bp.route('/socialized', methods=['GET'])
+def get_socialized():
+    if not request.args:
+        return jsonify(Animal.socialized())
+    else:
+        return jsonify(Animal.socialized(request.args))
 
 @bp.route('/animals', methods=['POST'])
 def add_animal():

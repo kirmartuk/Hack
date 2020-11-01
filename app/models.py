@@ -250,8 +250,19 @@ class Animal(db.Model):
         return Animal.query.all()
 
     def filter(filters):
+        query = db.session.query(Animal)
         for attr, value in filters.items():
-            return Animal.query.filter(getattr(Animal, attr) == value).all()
+            print(attr + " " + value)
+            query = query.filter(getattr(Animal, attr) == value)
+        return query.all()
+
+    def get_socialized(filters = {}):
+        query = db.session.query(Animal)
+        filters['ready'] = 1
+        for attr, value in filters.items():
+            print(attr + " " + value)
+            query = query.filter(getattr(Animal, attr) == value)
+        return query.all()
 
     def get_by_id(_id):
         return Animal.query.filter_by(id=_id).first()
