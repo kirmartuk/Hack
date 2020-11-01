@@ -5,7 +5,11 @@ from app.api import bp
 
 @bp.route('/animals', methods=['GET'])
 def get_animals():
-    return jsonify(Animal.get_all())
+    if not request.args:
+        print('no filter')
+        return jsonify(Animal.get_all())
+    else:
+        return jsonify(Animal.filter(request.args))
 
 @bp.route('/animals/<int:id>', methods=['GET'])
 def get_animal(id):

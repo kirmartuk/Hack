@@ -251,7 +251,7 @@ class Animal(db.Model):
 
     def filter(filters):
         for attr, value in filters.items():
-            return Animal.query.filter(attr == value)
+            return Animal.query.filter(getattr(Animal, attr) == value).all()
 
     def get_by_id(_id):
         return Animal.query.filter_by(id=_id).first()
