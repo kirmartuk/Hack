@@ -459,6 +459,15 @@ class PetRequest(db.Model):
     def get_request(_id):
         return PetRequest.query.filter_by(id=_id).first()
 
+    def add_json(re):
+        new_request = PetRequest(name=re['name'], phone=re['phone'], comment=re['comment'], animal=re['animal'])
+        db.session.add(new_request)
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+
     def add_request(_name, _phone, _comment, _animal):
         new_request = PetRequest(name=_name, phone=_phone, comment=_comment, animal=_animal)
         db.session.add(new_request)
