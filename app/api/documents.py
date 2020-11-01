@@ -1,15 +1,18 @@
 import os
+import io
+import docx
 from app.api import bp
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, send_file
 from flask import send_from_directory, render_template
 from app import app
 from flasgger import Swagger
+from app.models import *
 
 UPLOAD_DIRECTORY = os.getcwd() + "/src/"
 
 if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
-    
+
 swagger = Swagger(app)
 
 
@@ -68,3 +71,61 @@ def post_file(filename):
 
     # Return 201 CREATED
     return "", 201
+
+
+@bp.route("/report/<animal_id>", methods=["GET"])
+def get_report(animal_id):
+    animal = Animal.get_by_id(animal_id)
+    print(str(animal))
+    document = docx.Document("/home/kirill/hackaton/src/output.docx")
+    for paragraph in document.paragraphs:
+        print(paragraph.text)
+        ##
+        paragraph.text = paragraph.text.replace('[idcard]', str(animal.idcard))
+        paragraph.text = paragraph.text.replace('[address]', str(Shelter.get_by_id(animal.shelter).address))
+        paragraph.text = paragraph.text.replace('[daddy]', str(Shelter.get_by_id(animal.shelter).name))
+
+        if animal.animal_type == 1:
+            paragraph.text = paragraph.text.replace('[dog]', 'нет')
+            paragraph.text = paragraph.text.replace('[cat]', 'да')
+        else:
+            paragraph.text = paragraph.text.replace('[dog]', 'да')
+            paragraph.text = paragraph.text.replace('[cat]', 'нет')
+
+        paragraph.text = paragraph.text.replace('[age]', str(animal.age))
+        paragraph.text = paragraph.text.replace('[cell]', str(animal.cell))
+        paragraph.text = paragraph.text.replace('[weight]', str(animal.weight))
+        paragraph.text = paragraph.text.replace('[nickname]', animal.nickname)
+        if animal.male == 1:
+            paragraph.text = paragraph.text.replace('[sex]', "М")
+        else:
+            paragraph.text = paragraph.text.replace('[sex]', "Ж")
+        # get breed
+        paragraph.text = paragraph.text.replace('[breed]', str(animal.animal_breed))
+        paragraph.text = paragraph.text.replace('[color]', str(animal.color))
+        paragraph.text = paragraph.text.replace('[fur]', str(animal.fur))
+        paragraph.text = paragraph.text.replace('[ear]', str(animal.ears))
+        paragraph.text = paragraph.text.replace('[tail]', str(animal.tail))
+        paragraph.text = paragraph.text.replace('[size]', str(animal.size))
+        paragraph.text = paragraph.text.replace('[specials]', str(animal.special_signs))
+        paragraph.text = paragraph.text.replace('[character]', str(animal.character))
+        paragraph.text = paragraph.text.replace('[character]', str(animal.character))
+        paragraph.text = paragraph.text.replace('[idmark]', str(animal.idmark))
+        if animal.ready == 0:
+            paragraph.text = paragraph.text.replace('[ready]', 'Нет')
+        else:
+            paragraph.text = paragraph.text.replace('[ready]', 'Да')
+        paragraph.text = paragraph.text.replace('[sterilized]', str(animal.sterilized))
+        paragraph.text = paragraph.text.replace('[veterinarian]', str(animal.veterinarian))
+
+    document.save(UPLOAD_DIRECTORY + '/reports' + str(animal.id) + '.docx')
+    # add full path
+    # return jsonify(animal)
+    # Document("/home/kirill/hackaton/src/output.docx")
+    return send_file(UPLOAD_DIRECTORY + '/reports' + str(animal.id) + '.docx',
+                     mimetype='application/vnd.openxmlformats-officedocument.wordprocessing',
+                     as_attachment=True)
+
+# Animal(idcard='1664з-20',, weight=25, nickname='Рама', male=1, special_signs='нет', character='', animal_type=2, animal_breed=806, shelter=11, color='светло-коричневый', fur='короткая', ears='полустоячие', tail='обычный', size='средний', cell=23, idmark='643094100731524', sterilized='44047', veterinarian='Врач 3', ready=0)
+
+# def reformat():

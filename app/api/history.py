@@ -5,7 +5,7 @@ from app.api import bp
 
 @bp.route('/history/<int:id>', methods=['GET'])
 def get_events_for_animal(id):    
-    return jsonify(History.get_events_for(id)))
+    return jsonify(History.get_events_for(id))
     
 
 @bp.route('/history', methods=['POST'])
