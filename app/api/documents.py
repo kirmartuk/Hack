@@ -75,7 +75,7 @@ def post_file(filename):
     return "", 201
 
 
-@bp.route("/report/<animal_id>", methods=["GET"])
+@bp.route("/report/<animal_id>", methods=["GET","POST"])
 def get_report(animal_id):
     """Get report of animal
      ---
