@@ -446,6 +446,12 @@ class User(db.Model):
 
 @dataclass
 class PetRequest(db.Model):
+    id: int
+    name: str
+    phone: str
+    comment: str
+    animal: str
+    
     __tablename__ = 'pet_request'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(45), index=True, nullable=False)
