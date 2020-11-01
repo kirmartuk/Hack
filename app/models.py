@@ -85,7 +85,12 @@ class AnimalType(db.Model):
     def __repr__(self):
         return "item with id {0} has type {1}".format(self.id, self.atype)
 
+@dataclass
 class AnimalBreed(db.Model):
+    id: int
+    breed: str
+    animal_type: str
+    
     __tablename__ = 'animal_breed'
     id = db.Column(db.Integer, primary_key=True)
     breed = db.Column(db.String(48), nullable=False)
@@ -160,6 +165,9 @@ class Shelter(db.Model):
 
     def get_id_by_address(_address):
         return Shelter.query.filter_by(address=_address).first().id
+
+    def get_id_by_name(_name):
+        return Shelter.query.filter_by(name=_name).first().id
 
     def set_shelters(shelters):        
         for sh in shelters["shelters"]:
@@ -256,9 +264,10 @@ class Animal(db.Model):
                 query = query.filter(getattr(Animal, attr) == value)
             except:
                 pass
+        count = len(query.all())
         query = query.limit(limit)
         query = query.offset(offset)
-        return query.all()
+        return query.all(), count
 
     def get_socialized(limit, offset, filters = {}):
         query = db.session.query(Animal)
@@ -268,9 +277,10 @@ class Animal(db.Model):
                 query = query.filter(getattr(Animal, attr) == value)
             except:
                 pass
+        count = len(query.all())
         query = query.limit(limit)
         query = query.offset(offset)
-        return query.all()
+        return query.all(), count
 
     def get_by_id(_id):
         return Animal.query.filter_by(id=_id).first()
