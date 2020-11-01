@@ -249,19 +249,27 @@ class Animal(db.Model):
     def get_all():
         return Animal.query.all()
 
-    def filter(filters):
+    def filter(limit, offset, filters = {}):
         query = db.session.query(Animal)
         for attr, value in filters.items():
-            print(attr + " " + value)
-            query = query.filter(getattr(Animal, attr) == value)
+            try:
+                query = query.filter(getattr(Animal, attr) == value)
+            except:
+                pass
+        query = query.limit(limit)
+        query = query.offset(offset)
         return query.all()
 
-    def get_socialized(filters = {}):
+    def get_socialized(limit, offset, filters = {}):
         query = db.session.query(Animal)
         filters['ready'] = 1
         for attr, value in filters.items():
-            print(attr + " " + value)
-            query = query.filter(getattr(Animal, attr) == value)
+            try:
+                query = query.filter(getattr(Animal, attr) == value)
+            except:
+                pass
+        query = query.limit(limit)
+        query = query.offset(offset)
         return query.all()
 
     def get_by_id(_id):
