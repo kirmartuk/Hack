@@ -299,7 +299,7 @@ class Animal(db.Model):
             an['male'] = 1
         else:
             an['male'] = 0
-        new_animal = Animal(idcard=an['cardId'], age=an['age'], weight=an['weight'], nickname=an['nickname'], male=an['male'], special_signs=an['specialSigns'], character=an['character'], animal_type=an['animalType'], animal_breed=an['animalBreed'], shelter=an['shelter'], color=an['color'], fur=an['wool'], ears=an['ears'], tail=an['tail'], size=an['size'], cell=an['cell'], idmark=an['idMarker'], sterilized=an['sterilized'], veterinarian=an['veterinarian'], ready=an['readyToPickUp'])
+        new_animal = Animal(idcard=an['cardId'], age=an['age'], weight=an['weight'], nickname=an['nickname'], male=an['male'], special_signs=an['specialSigns'], character=an['character'], animal_type=an['animal_type'], animal_breed=an['animal_breed'], shelter=an['shelter'], color=an['color'], fur=an['wool'], ears=an['ears'], tail=an['tail'], size=an['size'], cell=an['cell'], idmark=an['idMarker'], sterilized=an['sterilized'], veterinarian=an['veterinarian'], ready=an['readyToPickUp'])
         db.session.add(new_animal)
         try:
             db.session.commit()
@@ -441,9 +441,6 @@ class User(db.Model):
             db.session.rollback()
         return bool(result)
 
-    def __repr__(self):
-        return "item with id{0} ".format(self.id)
-
 @dataclass
 class PetRequest(db.Model):
     id: int
@@ -491,9 +488,6 @@ class PetRequest(db.Model):
             print(e)
             db.session.rollback()
         return bool(result)
-
-    def __repr__(self):
-        return "item with id{0} ".format(self.id)
 
 class Catching(db.Model):
     __tablename__ = 'catching'
