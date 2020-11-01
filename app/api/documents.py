@@ -1,6 +1,8 @@
 import os
 import io
 import docx
+
+from datetime import date
 from app.api import bp
 from flask import Flask, request, abort, jsonify, send_file
 from flask import send_from_directory, render_template
@@ -75,12 +77,22 @@ def post_file(filename):
 
 @bp.route("/report/<animal_id>", methods=["GET"])
 def get_report(animal_id):
+    """Get report of animal
+     ---
+    parameters:
+         - in: path
+           name: id
+           type: int
+           required: true
+    responses:
+         200:
+           description: return file
+        """
+
     animal = Animal.get_by_id(animal_id)
-    print(str(animal))
     document = docx.Document("/home/kirill/hackaton/src/output.docx")
     for paragraph in document.paragraphs:
-        print(paragraph.text)
-        ##
+        paragraph.text = paragraph.text.replace('[date]', date.today().strftime("%d /%m / %Y год"))
         paragraph.text = paragraph.text.replace('[idcard]', str(animal.idcard))
         paragraph.text = paragraph.text.replace('[address]', str(Shelter.get_by_id(animal.shelter).address))
         paragraph.text = paragraph.text.replace('[daddy]', str(Shelter.get_by_id(animal.shelter).name))
@@ -119,13 +131,6 @@ def get_report(animal_id):
         paragraph.text = paragraph.text.replace('[veterinarian]', str(animal.veterinarian))
 
     document.save(UPLOAD_DIRECTORY + '/reports' + str(animal.id) + '.docx')
-    # add full path
-    # return jsonify(animal)
-    # Document("/home/kirill/hackaton/src/output.docx")
     return send_file(UPLOAD_DIRECTORY + '/reports' + str(animal.id) + '.docx',
                      mimetype='application/vnd.openxmlformats-officedocument.wordprocessing',
                      as_attachment=True)
-
-# Animal(idcard='1664з-20',, weight=25, nickname='Рама', male=1, special_signs='нет', character='', animal_type=2, animal_breed=806, shelter=11, color='светло-коричневый', fur='короткая', ears='полустоячие', tail='обычный', size='средний', cell=23, idmark='643094100731524', sterilized='44047', veterinarian='Врач 3', ready=0)
-
-# def reformat():
